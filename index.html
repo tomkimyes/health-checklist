@@ -97,6 +97,19 @@
             margin-bottom: 10px;
         }
 
+        .reset-link {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .reset-link:hover {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
         .week-info {
             font-size: 16px;
             opacity: 0.9;
@@ -501,28 +514,6 @@
             transform: scale(1.1);
         }
 
-        .refresh-btn {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-left: 15px;
-            flex-shrink: 0;
-            opacity: 0.8;
-        }
-
-        .refresh-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            opacity: 1;
-            transform: scale(1.05);
-        }
 
         .alarm-bell.ringing {
             animation: ring 0.5s ease-in-out infinite alternate;
@@ -585,8 +576,8 @@
             <div class="header-content">
                 <div class="header-text">
                     <h1>12주 건강 체크리스트</h1>
+                    <div class="reset-link" onclick="showResetMenu()" title="데이터 초기화">초기화</div>
                 </div>
-                <div class="refresh-btn" onclick="refreshApp()" title="새로고침">새로고침</div>
                 <div class="alarm-bell" onclick="toggleAlarmPanel()" id="alarmBell">🔔</div>
             </div>
             <div class="week-info" id="weekInfo"></div>
@@ -658,7 +649,7 @@
         </div>
     </div>
     
-    <div class="float-button" onclick="showResetMenu()">↻</div>
+    <div class="float-button" onclick="refreshApp()">🔄</div>
     
     <script>
         const checklistData = {
