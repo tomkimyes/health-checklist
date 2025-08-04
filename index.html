@@ -502,25 +502,26 @@
         }
 
         .refresh-btn {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 8px 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 16px;
+            font-size: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
             margin-left: 15px;
             flex-shrink: 0;
+            opacity: 0.8;
         }
 
         .refresh-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: rotate(180deg);
+            background: rgba(255, 255, 255, 0.25);
+            opacity: 1;
+            transform: scale(1.05);
         }
 
         .alarm-bell.ringing {
@@ -585,7 +586,7 @@
                 <div class="header-text">
                     <h1>12주 건강 체크리스트</h1>
                 </div>
-                <div class="refresh-btn" onclick="refreshApp()" title="새로고침">🔄</div>
+                <div class="refresh-btn" onclick="refreshApp()" title="새로고침">새로고침</div>
                 <div class="alarm-bell" onclick="toggleAlarmPanel()" id="alarmBell">🔔</div>
             </div>
             <div class="week-info" id="weekInfo"></div>
