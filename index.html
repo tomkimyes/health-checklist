@@ -114,6 +114,69 @@
             transform: scale(1.05);
         }
 
+        .update-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 2000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .update-banner.show {
+            display: flex;
+        }
+
+        .update-message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .update-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .update-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .update-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .update-btn.primary {
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .update-btn.primary:hover {
+            background: white;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
         .week-info {
             font-size: 16px;
             opacity: 0.9;
@@ -577,6 +640,18 @@
     </style>
 </head>
 <body>
+    <!-- Update Banner -->
+    <div class="update-banner" id="updateBanner">
+        <div class="update-message">
+            <span>🔄</span>
+            <span>새 버전이 있습니다!</span>
+        </div>
+        <div class="update-buttons">
+            <button class="update-btn primary" onclick="updateApp()">지금 업데이트</button>
+            <button class="update-btn" onclick="dismissUpdate()">나중에</button>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
             <div class="header-content">
@@ -1227,7 +1302,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 const swCode = `
-                    const CACHE_NAME = 'health-checklist-v1';
+                    const CACHE_NAME = 'health-checklist-v2';
                     const urlsToCache = ['./', './index.html'];
                     
                     self.addEventListener('install', function(event) {
@@ -1236,6 +1311,13 @@
                                 return cache.addAll(urlsToCache);
                             })
                         );
+                    });
+
+                    // Handle skipWaiting message
+                    self.addEventListener('message', function(event) {
+                        if (event.data && event.data.action === 'skipWaiting') {
+                            self.skipWaiting();
+                        }
                     });
                     
                     self.addEventListener('fetch', function(event) {
@@ -1346,12 +1428,90 @@
         // Refresh app function
         function refreshApp() {
             // Show loading animation
-            const refreshBtn = document.querySelector('.refresh-btn');
-            refreshBtn.style.transform = 'rotate(360deg)';
+            const refreshBtn = document.querySelector('.float-button');
+            if (refreshBtn) {
+                refreshBtn.style.transform = 'rotate(360deg)';
+            }
             
             // Force reload
             window.location.reload(true);
         }
+
+        // Update detection and management
+        let updateAvailable = false;
+        let newWorker = null;
+
+        // Service Worker update detection
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                // New service worker has taken control
+                if (updateAvailable) {
+                    window.location.reload();
+                }
+            });
+        }
+
+        // Check for updates periodically
+        function checkForUpdates() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistration().then(registration => {
+                    if (registration) {
+                        registration.update().then(() => {
+                            // Check if there's a waiting worker
+                            if (registration.waiting && !updateAvailable) {
+                                showUpdateBanner();
+                                newWorker = registration.waiting;
+                                updateAvailable = true;
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        // Show update banner
+        function showUpdateBanner() {
+            const banner = document.getElementById('updateBanner');
+            banner.classList.add('show');
+            
+            // Adjust container margin to account for banner
+            document.querySelector('.container').style.marginTop = '70px';
+        }
+
+        // Hide update banner
+        function hideUpdateBanner() {
+            const banner = document.getElementById('updateBanner');
+            banner.classList.remove('show');
+            
+            // Reset container margin
+            document.querySelector('.container').style.marginTop = '0';
+        }
+
+        // Update app function
+        function updateApp() {
+            if (newWorker) {
+                newWorker.postMessage({ action: 'skipWaiting' });
+                hideUpdateBanner();
+                // Show loading message
+                const banner = document.getElementById('updateBanner');
+                banner.innerHTML = '<div class="update-message"><span>🔄</span><span>업데이트 중...</span></div>';
+                banner.classList.add('show');
+            }
+        }
+
+        // Dismiss update
+        function dismissUpdate() {
+            hideUpdateBanner();
+            updateAvailable = false;
+        }
+
+        // Check for updates every 30 seconds
+        setInterval(checkForUpdates, 30000);
+
+        // Check for updates on page load
+        window.addEventListener('load', () => {
+            setTimeout(checkForUpdates, 5000);
+        });
 
         // iOS Safari specific install guidance
         function showIOSInstallGuide() {
