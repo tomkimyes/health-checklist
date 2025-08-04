@@ -95,17 +95,23 @@
             margin-bottom: 10px;
         }
 
-        .reset-link {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.7);
+        .reset-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            padding: 6px 12px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 11px;
             cursor: pointer;
-            text-decoration: underline;
-            margin-top: 5px;
             transition: all 0.3s ease;
+            margin: 8px 0;
+            display: inline-block;
         }
 
-        .reset-link:hover {
-            color: rgba(255, 255, 255, 0.9);
+        .reset-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+            transform: scale(1.05);
         }
 
         .week-info {
@@ -576,10 +582,10 @@
             <div class="header-content">
                 <div class="header-text">
                     <h1>12주 건강 체크리스트</h1>
-                    <div class="reset-link" onclick="showResetMenu()" title="데이터 초기화">초기화</div>
                 </div>
                 <div class="alarm-bell" onclick="toggleAlarmPanel()" id="alarmBell">🔔</div>
             </div>
+            <div class="reset-btn" onclick="showResetMenu()" title="데이터 초기화">초기화</div>
             <div class="week-info" id="weekInfo"></div>
             <div class="week-selector">
                 <button onclick="changeWeek(-1)" id="prevWeek">‹</button>
